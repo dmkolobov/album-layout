@@ -9,9 +9,18 @@
 
 (enable-console-print!)
 
+
+(defn render-img
+  [id {:keys [width height]}]
+  [:div
+   {:style {:width  "100%"
+            :height "100%"
+            :border "1px solid black"}}
+   (str id "!")])
+
 (defn hello-world
   []
-  [views/gallery])
+  [views/gallery :render-fn render-img])
 
 (dispatch-sync [:initialize-db {"p1.jpg" {:aspect 1.5}
                                 "p2.jpg" {:aspect 1.5}
