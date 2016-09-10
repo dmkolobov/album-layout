@@ -5,5 +5,4 @@
   "The default value for the image gallery state."
   {:window {:width 0
             :height 0}
-   :images {}
-   :active []})
+   :images {}})
