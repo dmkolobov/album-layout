@@ -1,6 +1,7 @@
 (ns galleries.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]
-            [galleries.util :refer [selector]]))
+            [galleries.util :refer [selector]]
+            [galleries.bundle]))
 
 (reg-sub :debug (fn [db _] (str db)))
 (reg-sub :images (fn [db _] (:images db)))
@@ -27,9 +28,8 @@
   whose sum is as equal as possible to the sums of other rows."
   [aspects num-rows]
   (js->clj
-    (.exports js/module
-              (clj->js (map (partial * 100) aspects))
-              num-rows)))
+    (js/lpartition (clj->js (map (partial * 100) aspects))
+                      num-rows)))
 
 (defn image-weight [i] (* 100 (image-aspect i)))
 
@@ -56,6 +56,7 @@
     [(subscribe [:images])
      (subscribe [:window])])
   (fn [[images window] _]
+    (println "computing layout")
     (compute-layout images window)))
 
 (defn row-scale-factor

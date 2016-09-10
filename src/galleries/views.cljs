@@ -19,7 +19,7 @@
                                       :float      "left"
                                       :box-sizing "border-box"}}
                              [:div
-                              {:style {:width "100%"
+                              {:style {:width  "100%"
                                        :height "100%"
                                        :border "1px solid black"}}
                               id]])

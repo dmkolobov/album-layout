@@ -14,7 +14,10 @@
                  [re-frame "0.8.0"]]
 
   :plugins [[lein-figwheel "0.5.4-7"]
-            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]
+            [lein-npm "0.6.2"]]
+
+  :npm {:dependencies [[linear-partitioning "0.3.1"]]}
 
   :source-paths ["src"]
 
@@ -41,7 +44,9 @@
                            :source-map-timestamp true
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
                            ;; https://github.com/binaryage/cljs-devtools
-                           :preloads [devtools.preload]}}
+                           :preloads [devtools.preload]
+                           :foreign-libs [{:file "resources/public/js/bundle.js"
+                                           :provides ["galleries.bundle"]}]}}
                ;; This next build is an compressed minified build for
                ;; production. You can build this with:
                ;; lein cljsbuild once min
@@ -50,7 +55,9 @@
                 :compiler {:output-to "resources/public/js/compiled/galleries.js"
                            :main galleries.core
                            :optimizations :advanced
-                           :pretty-print false}}]}
+                           :pretty-print false
+                           :foreign-libs [{:file "resources/public/js/bundle.js"
+                                           :provides ["galleries.bundle"]}]}}]}
 
   :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default
