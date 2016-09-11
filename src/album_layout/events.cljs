@@ -5,20 +5,25 @@
 
 (defrecord LayoutContainer [base-box box])
 
+(defn should-layout?
+  [delta rect new-rect]
+  (> (.abs js/Math
+           (- (:width rect)
+              (:width new-rect)))
+     delta))
+
 (defn handle-container-resized
   [{:keys [db]} [layout-id new-base scale-increment]]
   {:db
    (update-in db
               [:album-layout/containers layout-id]
               (fn [{:keys [base-box] :as container}]
-                (if (< (.abs js/Math
-                             (- (:width base-box)
-                                (:width new-base)))
-                       scale-increment)
-                  (assoc container :box new-base)
-                  (LayoutContainer. new-base new-base))))})
+                (if (should-layout? scale-increment base-box new-base)
+                  (do
+                    (println "laying out")
+                    (LayoutContainer. new-base new-base))
+                  (assoc container :box new-base))))})
 
 (reg-event-fx :album-layout/container-resized
               [trim-v]
               handle-container-resized)
-;;
