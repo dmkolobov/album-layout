@@ -14,7 +14,7 @@
 (defn resize-handler
   [gallery-id node]
   (fn []
-    (dispatch [:window-resized gallery-id (node-dimensions node)])))
+    (dispatch [:album-layout/container-resized gallery-id (node-dimensions node)])))
 
 (defn gallery;;
   ""

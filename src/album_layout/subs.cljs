@@ -4,8 +4,8 @@
             [album-layout.bundle]))
 
 (reg-sub :debug (fn [db _] (str db)))
-(reg-sub :window (fn [db [_ gallery-id]] (get-in db [:windows gallery-id])))
-(reg-sub :window-base (fn [db [_ gallery-id]] (get-in db [:windows gallery-id :base])))
+(reg-sub :window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
+(reg-sub :window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base])))
 
 (defn item-id [[id _]] id);;
 (defn item-aspect [[id {:keys [aspect]}]] aspect)

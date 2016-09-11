@@ -40,9 +40,9 @@
 
 (reg-sub :images (fn [db _] (:images db)))
 (reg-event-db :set-images (fn [db [_ images]] (assoc db :images images)))
-
 (dispatch-sync [:set-images images])
-(dispatch-sync [:initialize-db])
+
+(dispatch-sync [:album-layout/initialize-db])
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
