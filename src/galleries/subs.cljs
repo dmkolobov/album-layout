@@ -4,9 +4,8 @@
             [galleries.bundle]))
 
 (reg-sub :debug (fn [db _] (str db)))
-(reg-sub :images (fn [db _] (:images db)))
-(reg-sub :window (fn [db _] (:window db)))
-(reg-sub :window-scale (fn [db _] (:window-scale db)))
+(reg-sub :window (fn [db [_ gallery-id]] (get-in db [:windows gallery-id])))
+(reg-sub :window-base (fn [db [_ gallery-id]] (get-in db [:windows gallery-id :base])))
 
 (defn image-id [[id _]] id)
 (defn image-aspect [[id {:keys [aspect]}]] aspect)
@@ -20,7 +19,7 @@
             (/ (reduce (fn [total aspect] (+ total (* aspect ideal-height)))
                          0
                          aspects)
-                 width))))
+               width))))
 
 (defn compute-partitions
   "Given a sequence of image aspects and the number of rows, return
@@ -44,20 +43,23 @@
   "Given a sequence of images and the window dimensions, return a sequence of
   sequences containing image entries laid out according to the partition
   algorithm."
-  [images window]
+  [images window-base]
   (let [aspects  (map image-aspect images)
-        num-rows (compute-rows window aspects)]
+        num-rows (compute-rows window-base aspects)]
     (fill-partitions (compute-partitions aspects num-rows)
                      images)))
 
 (reg-sub
   :layout
-  (fn [_]
-    [(subscribe [:images])
-     (subscribe [:window])])
-  (fn [[images window] _]
-    (println "computing layout")
-    (compute-layout images window)))
+  (fn [[_ images]]
+    [images
+     (subscribe [:window-base (hash images)])])
+  (fn [[images window-base] _]
+    (let [start  (.now js/Date)
+          layout (compute-layout images window-base)]
+      (with-out-str (println layout))
+      (println "time to layout:" (- (.now js/Date) start))
+      layout)))
 
 (defn row-scale-factor
   "Given the row width, ideal row height, and a sequence of images,
@@ -83,16 +85,15 @@
 
 (defn scale-layout
   "Return a layout which contains explicit dimensions for images."
-  [window window-scale layout]
-  (let [width        (* window-scale (:width window))
-        height       (:height window)]
+  [base scale layout]
+  (let [width        (* scale (:width base))
+        height       (:height base)]
     (map (partial scale-row width (/ height 2)) layout)))
 
 (reg-sub
   :scaled-layout
-  (fn [_]
-    [(subscribe [:window])
-     (subscribe [:window-scale])
-     (subscribe [:layout])])
-  (fn [[window window-scale layout] _]
-    (scale-layout window window-scale layout)))
+  (fn [[_ images]]
+    [(subscribe [:window (hash images)])
+     (subscribe [:layout images])])
+  (fn [[{:keys [base scale]} layout] _]
+    (scale-layout base scale layout)))

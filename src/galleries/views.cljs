@@ -1,6 +1,7 @@
 (ns galleries.views
   (:require [re-frame.core :refer [subscribe dispatch]]
-            [cljs.pprint :refer [pprint]]))
+            [cljs.pprint :refer [pprint]]
+            [reagent.core :as reagent]))
 
 (defn gallery-
   [layout & {:keys [render-fn]}]
@@ -20,13 +21,34 @@
                                       :box-sizing "border-box"}}
                              [render-fn id data]])
                           row)])
-                  layout))])
+                  @layout))])
+
+(defn node-dimensions
+  "Given a DOM element, return a map containing the width
+  and height of the element."
+  [node]
+  (let [box (.getBoundingClientRect node)]
+    {:width  (.-width box)
+     :height (.-innerHeight js/window)}))
+
+(defn resize-handler
+  [gallery-id node]
+  (fn []
+    (dispatch [:window-resized gallery-id (node-dimensions node)])))
 
 (defn gallery
-  [& {:keys [render-fn]}]
-  (let [scaled-layout (subscribe [:scaled-layout])]
-    (fn []
-      [:div
-       [gallery- @scaled-layout :render-fn render-fn]])))
+  ""
+  [& {:keys [items render-fn]}]
+  (let [gallery-id (hash items)
+        layout     (subscribe [:scaled-layout items])]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [owner]
+         (let [handler (resize-handler gallery-id (reagent/dom-node owner))]
+           (aset js/window "onresize" handler)
+           (handler)))
+       :reagent-render
+       (fn []
+         [gallery- layout :render-fn render-fn])})))
 
 
