@@ -26,14 +26,16 @@
           (/ (total-width (/ height 2) items)
              width)))
 
+(defn aspect-weight [a] (* a 100))
+
 (defn compute-partitions
   "Given a sequence of item aspects and the number of rows, return
   a sequence of rows, each of which is a sequence of item aspects
   whose sum is as equal as possible to the sums of other rows."
   [aspects num-rows]
   (js->clj
-    (js/lpartition (clj->js (map (partial * 100) aspects))
-                      num-rows)))
+    (js/lpartition (clj->js (map aspect-weight aspects))
+                   num-rows)))
 
 (defn item-weight [i] (* 100 (item-aspect i)))
 
@@ -89,8 +91,8 @@
   "Return a layout which contains explicit dimensions for items."
   [{:keys [base scale] :as window} layout]
   (let [width        (* scale (:width base))
-        height       (:height base)]
-    (map (partial scale-row width (/ height 2)) layout)))
+        height       (/ (:height base) 2)]
+    (for [row layout] (scale-row width height row))))
 
 (reg-sub
   :scaled-layout
