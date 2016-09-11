@@ -7,26 +7,21 @@
   [320 480 720 1960])
 
 (defn current-breakpoint
-  "Given the window dimensions, return the larget breakpoint that is
-  less than that width."
   [{:keys [width]}]
   (last (filter #(<= % width) breakpoints)))
 
 (defn handle-container-resized
-  "Update either the base window size, or the window scale based
-  on the size of the resized window, and the previous size of the
-  window."
-  [{:keys [db]} [gallery-id window]]
-  (let [current-window (get-in db [:album-layout/containers gallery-id :base])]
-    (if (= (current-breakpoint current-window)
-           (current-breakpoint window))
-      {:db (assoc-in db
-                     [:album-layout/containers gallery-id :scale]
-                      (/ (:width window) (:width current-window)))}
-      {:db (assoc-in db
-                     [:album-layout/containers gallery-id]
-                     {:base  window
-                      :scale 1.0})})))
+  [{:keys [db]} [layout-id new-base]]
+  {:db
+   (update-in db
+              [:album-layout/containers layout-id]
+              (fn [{:keys [base] :as container}]
+                (if (= (current-breakpoint base)
+                       (current-breakpoint new-base))
+                  (assoc container
+                    :scale (/ (:width new-base)
+                              (:width base)))
+                  {:base new-base :scale 1.0})))})
 
 (reg-event-fx :album-layout/container-resized
               [trim-v]
