@@ -12,20 +12,20 @@
 (enable-console-print!)
 
 (defn resize-handler
-  [layout-id node]
+  [layout-id node scale-increment]
   (fn []
-    (dispatch [:album-layout/container-resized layout-id (node-dimensions node)])))
+    (dispatch [:album-layout/container-resized layout-id (node-dimensions node) scale-increment])))
 
 (defn perfect-layout
-  [& {:keys [items
-           render-fn]}]
+  [& {:keys [items render-fn scale-increment]
+      :or {scale-increment 100}}]
   (let [layout-id (hash items)
         layout    (subscribe [:album-layout/scaled-layout items])]
     (reagent/create-class
       {:component-did-mount
        (fn [owner]
          (let [node (reagent/dom-node owner)
-               on-resize! (resize-handler layout-id node)]
+               on-resize! (resize-handler layout-id node scale-increment)]
            (aset js/window "onresize" on-resize!)
            (.listen goog.events
                     js/window
@@ -63,8 +63,9 @@
 
 (defn hello-world
   []
-  [perfect-layout :items     (subscribe [:images])
-                  :render-fn render-img])
+  [perfect-layout :items           (subscribe [:images])
+                  :render-fn       render-img
+                  :scale-increment 100])
 
 (reg-sub :images (fn [db _] (:images db)))
 (reg-event-db :set-images (fn [db [_ images]] (assoc db :images images)))
