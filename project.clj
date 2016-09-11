@@ -1,4 +1,4 @@
-(defproject galleries "0.1.0-SNAPSHOT"
+(defproject album-layout "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -30,34 +30,34 @@
                 ;; the presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
-                :figwheel {:on-jsload "galleries.core/on-js-reload"
+                :figwheel {:on-jsload "album-layout.core/on-js-reload"
                            ;; :open-urls will pop open your application
                            ;; in the default browser once Figwheel has
                            ;; started and complied your application.
                            ;; Comment this out once it no longer serves you.
                            :open-urls ["http://localhost:3449/index.html"]}
 
-                :compiler {:main galleries.core
+                :compiler {:main album-layout.core
                            :asset-path "js/compiled/out"
-                           :output-to "resources/public/js/compiled/galleries.js"
+                           :output-to "resources/public/js/compiled/album-layout.js"
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
                            ;; To console.log CLJS data-structures make sure you enable devtools in Chrome
                            ;; https://github.com/binaryage/cljs-devtools
                            :preloads [devtools.preload]
                            :foreign-libs [{:file "resources/public/js/bundle.js"
-                                           :provides ["galleries.bundle"]}]}}
+                                           :provides ["album-layout.bundle"]}]}}
                ;; This next build is an compressed minified build for
                ;; production. You can build this with:
                ;; lein cljsbuild once min
                {:id "min"
                 :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/galleries.js"
-                           :main galleries.core
+                :compiler {:output-to "resources/public/js/compiled/album-layout.js"
+                           :main album-layout.core
                            :optimizations :advanced
                            :pretty-print false
                            :foreign-libs [{:file "resources/public/js/bundle.js"
-                                           :provides ["galleries.bundle"]}]}}]}
+                                           :provides ["album-layout.bundle"]}]}}]}
 
   :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default

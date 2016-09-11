@@ -1,14 +1,13 @@
-(ns galleries.core
+(ns album-layout.core
   (:require [reagent.core :as reagent]
             [re-frame.core :refer [reg-sub reg-event-db subscribe dispatch dispatch-sync]]
-            [galleries.db :as db]
-            [galleries.views :as views]
+            [album-layout.db :as db]
+            [album-layout.views :as views]
             ;; Need to include 'subs' and 'events' explicitely for Google Closure Compiler.
-            [galleries.subs]
-            [galleries.events]))
+            [album-layout.subs]
+            [album-layout.events]))
 
 (enable-console-print!)
-
 
 (defn render-img
   [id {:keys [width height]}]

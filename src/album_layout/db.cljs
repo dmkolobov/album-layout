@@ -1,4 +1,4 @@
-(ns galleries.db
+(ns album-layout.db
   (:require [re-frame.core :as re-frame]))
 
 (def default-value

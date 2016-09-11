@@ -1,4 +1,4 @@
-(ns galleries.util)
+(ns album-layout.util)
 
 (defn selector
   [key-fn coll]

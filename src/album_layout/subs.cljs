@@ -1,7 +1,7 @@
-(ns galleries.subs
+(ns album-layout.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]
-            [galleries.util :refer [selector]]
-            [galleries.bundle]))
+            [album-layout.util :refer [selector]]
+            [album-layout.bundle]))
 
 (reg-sub :debug (fn [db _] (str db)))
 (reg-sub :window (fn [db [_ gallery-id]] (get-in db [:windows gallery-id])))

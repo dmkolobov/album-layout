@@ -1,4 +1,4 @@
-(ns galleries.views
+(ns album-layout.views
   (:require [re-frame.core :refer [subscribe dispatch]]
             [cljs.pprint :refer [pprint]]
             [reagent.core :as reagent]))

@@ -1,5 +1,5 @@
-(ns galleries.events
-  (:require [galleries.db :refer [default-value]]
+(ns album-layout.events
+  (:require [album-layout.db :refer [default-value]]
             [re-frame.core :refer [reg-cofx reg-event-db reg-event-fx inject-cofx trim-v]]))
 
 
