@@ -25,7 +25,6 @@
        (fn [owner]
          (let [node (reagent/dom-node owner)
                on-resize! (resize-handler layout-id node scale-increment)]
-           (aset js/window "onresize" on-resize!)
            (.listen goog.events
                     js/window
                     (.-RESIZE (.-EventType goog.events))
