@@ -5,9 +5,32 @@
             [album-layout.views :as views]
             ;; Need to include 'subs' and 'events' explicitely for Google Closure Compiler.
             [album-layout.subs]
-            [album-layout.events]))
+            [album-layout.events]
+            [album-layout.util :refer [node-dimensions]]))
 
 (enable-console-print!)
+
+(defn resize-handler
+  [layout-id node]
+  (fn []
+    (dispatch [:album-layout/container-resized layout-id (node-dimensions node)])))
+
+(defn perfect-layout
+  [& {:keys [items
+           render-fn]}]
+  (let [layout-id (hash items)
+        layout    (subscribe [:scaled-layout items])]
+    (reagent/create-class
+      {:component-did-mount
+       (fn [owner]
+         (let [node (reagent/dom-node owner)
+               on-resize! (resize-handler layout-id node)]
+           (aset js/window "onresize" on-resize!)
+           (on-resize!)))
+       :reagent-render
+       (fn []
+         [views/gallery :layout    layout
+                        :render-fn render-fn])})))
 
 (defn render-img
   [id data]
@@ -35,8 +58,8 @@
 
 (defn hello-world
   []
-  [views/gallery :items      (subscribe [:images])
-                 :render-fn render-img])
+  [perfect-layout :items     (subscribe [:images])
+                  :render-fn render-img])
 
 (reg-sub :images (fn [db _] (:images db)))
 (reg-event-db :set-images (fn [db [_ images]] (assoc db :images images)))
