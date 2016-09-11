@@ -1,5 +1,6 @@
 (ns album-layout.core
-  (:require [reagent.core :as reagent]
+  (:require [goog.events]
+            [reagent.core :as reagent]
             [re-frame.core :refer [reg-sub reg-event-db subscribe dispatch dispatch-sync]]
             [album-layout.db :as db]
             [album-layout.views :as views]
@@ -26,6 +27,10 @@
          (let [node (reagent/dom-node owner)
                on-resize! (resize-handler layout-id node)]
            (aset js/window "onresize" on-resize!)
+           (.listen goog.events
+                    js/window
+                    (.-RESIZE (.-EventType goog.events))
+                    on-resize!)
            (on-resize!)))
        :reagent-render
        (fn []
