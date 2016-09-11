@@ -26,13 +26,3 @@
 (reg-event-fx :album-layout/container-resized
               [trim-v]
               handle-container-resized)
-
-(defn handle-initialize-db
-  "Adds default schema for album-layouts. All keys
-  used by album-layout are prefixed with :album-layout/<key>"
-  [{:keys [db]} _]
-  {:db (merge db db/default-value)})
-
-(reg-event-fx :album-layout/initialize-db
-              [trim-v]
-              handle-initialize-db)
