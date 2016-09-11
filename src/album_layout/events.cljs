@@ -1,7 +1,5 @@
 (ns album-layout.events
-  (:require [album-layout.db :refer [default-value]]
-            [re-frame.core :refer [reg-cofx reg-event-db reg-event-fx inject-cofx trim-v]]
-            [album-layout.db :as db]))
+  (:require [re-frame.core :refer [reg-cofx reg-event-db reg-event-fx inject-cofx trim-v]]))
 
 (defrecord LayoutContainer [base-box box])
 

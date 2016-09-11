@@ -1,7 +1,6 @@
 (ns album-layout.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]
-            [album-layout.util :refer [selector]]
-            [album-layout.bundle]))
+            [album-layout.util :refer [selector]]))
 
 (reg-sub :album-layout/window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
 (reg-sub :album-layout/window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base-box])))

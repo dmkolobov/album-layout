@@ -1,0 +1,1 @@
+function lpartition(coll, n){};
