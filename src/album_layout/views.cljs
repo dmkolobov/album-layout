@@ -16,7 +16,7 @@
   (fn []
     (dispatch [:album-layout/container-resized gallery-id (node-dimensions node)])))
 
-(defn gallery;;
+(defn gallery
   ""
   [& {:keys [items render-fn]}]
   (let [gallery-id (hash items)

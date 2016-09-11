@@ -10,16 +10,21 @@
 (defn item-id [[id _]] id);;
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
+(defn total-width
+  ""
+  [target-height items]
+  (reduce (fn [sum [_ {:keys [aspect]}]]
+            (+ sum (* aspect target-height)))
+          0
+          items))
+
 (defn compute-rows
   "Given the window dimensions and a sequence of item aspect ratios,
   return the ideal number of rows for the gallery layout."
-  [{:keys [width height]} aspects]
-  (let [ideal-height (/ height 2)]
-    (.round js/Math
-            (/ (reduce (fn [total aspect] (+ total (* aspect ideal-height)))
-                         0
-                         aspects)
-               width))))
+  [{:keys [width height]} items]
+  (.round js/Math
+          (/ (total-width (/ height 2) items)
+             width)))
 
 (defn compute-partitions
   "Given a sequence of item aspects and the number of rows, return
@@ -45,7 +50,7 @@
   algorithm."
   [items window-base]
   (let [aspects  (map item-aspect items)
-        num-rows (compute-rows window-base aspects)]
+        num-rows (compute-rows window-base items)]
     (fill-partitions (compute-partitions aspects num-rows)
                      items)))
 
@@ -67,11 +72,7 @@
   return the scale factor s, where the actual row height is given
   by multiplying the ideal row height by s."
   [row-width row-height items]
-  (/ row-width
-     (reduce (fn [sum [_ {:keys [aspect]}]]
-               (+ sum (* aspect row-height)))
-             0
-             items)))
+  (/ row-width (total-width row-height items)))
 
 (defn scale-row
   "Given the row dimensions and a sequence of items, return a new
