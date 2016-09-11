@@ -7,7 +7,6 @@
 (reg-sub :window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
 (reg-sub :window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base])))
 
-(defn item-id [[id _]] id);;
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
 (defn total-width
@@ -82,9 +81,10 @@
   are scaled so that the sum of their widths is equal to the the row width."
   [row-width row-height items]
   (let [factor (row-scale-factor row-width row-height items)]
-    (map (fn [[id {:keys [aspect]}]]
-           [id {:width  (* aspect row-height factor)
-                :height (* row-height factor)}])
+    (map (fn [[id {:keys [aspect] :as data}]]
+           [id (merge data
+                      {:width  (* aspect row-height factor)
+                       :height (* row-height factor)})])
          items)))
 
 (defn scale-layout

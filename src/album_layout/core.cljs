@@ -10,7 +10,7 @@
 (enable-console-print!)
 
 (defn render-img
-  [id {:keys [width height]}]
+  [id data]
   [:div
    {:style {:width  "100%"
             :height "100%"
