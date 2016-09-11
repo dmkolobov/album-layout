@@ -3,9 +3,8 @@
             [album-layout.util :refer [selector]]
             [album-layout.bundle]))
 
-(reg-sub :debug (fn [db _] (str db)))
-(reg-sub :window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
-(reg-sub :window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base])))
+(reg-sub :album-layout/window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
+(reg-sub :album-layout/window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base])))
 
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
@@ -56,10 +55,10 @@
                      items)))
 
 (reg-sub
-  :layout
+  :album-layout/layout
   (fn [[_ items]]
     [items
-     (subscribe [:window-base (hash items)])])
+     (subscribe [:album-layout/window-base (hash items)])])
   (fn [[items window-base] _]
     (when window-base
       (let [start  (.now js/Date)
@@ -95,9 +94,9 @@
     (for [row layout] (scale-row width height row))))
 
 (reg-sub
-  :scaled-layout
+  :album-layout/scaled-layout
   (fn [[_ items]]
-    [(subscribe [:window (hash items)])
-     (subscribe [:layout items])])
+    [(subscribe [:album-layout/window (hash items)])
+     (subscribe [:album-layout/layout items])])
   (fn [[window layout] _]
     (scale-layout window layout)))

@@ -20,7 +20,7 @@
   [& {:keys [items
            render-fn]}]
   (let [layout-id (hash items)
-        layout    (subscribe [:scaled-layout items])]
+        layout    (subscribe [:album-layout/scaled-layout items])]
     (reagent/create-class
       {:component-did-mount
        (fn [owner]
