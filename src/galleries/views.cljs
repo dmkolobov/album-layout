@@ -3,26 +3,6 @@
             [cljs.pprint :refer [pprint]]
             [reagent.core :as reagent]))
 
-(defn gallery-
-  [layout & {:keys [render-fn]}]
-  [:div
-   (doall
-     (map-indexed (fn [idx row]
-                    ^{:key idx}
-                    [:div
-                     {:style {:overflow "hidden"}}
-                     (map (fn [[id {:keys [width height] :as data}]]
-                            ^{:key id}
-                            [:div
-                             {:style {:width      width
-                                      :height     height
-                                      :padding    "0.25em"
-                                      :float      "left"
-                                      :box-sizing "border-box"}}
-                             [render-fn id data]])
-                          row)])
-                  @layout))])
-
 (defn node-dimensions
   "Given a DOM element, return a map containing the width
   and height of the element."
@@ -36,7 +16,7 @@
   (fn []
     (dispatch [:window-resized gallery-id (node-dimensions node)])))
 
-(defn gallery
+(defn gallery;;
   ""
   [& {:keys [items render-fn]}]
   (let [gallery-id (hash items)
@@ -49,6 +29,22 @@
            (handler)))
        :reagent-render
        (fn []
-         [gallery- layout :render-fn render-fn])})))
+         [:div
+          (doall
+            (map-indexed (fn [idx row]
+                           ^{:key idx}
+                           [:div
+                            {:style {:overflow "hidden"}}
+                            (map (fn [[id {:keys [width height] :as data}]]
+                                   ^{:key id}
+                                   [:div
+                                    {:style {:width      width
+                                             :height     height
+                                             :padding    "0.25em"
+                                             :float      "left"
+                                             :box-sizing "border-box"}}
+                                    [render-fn id data]])
+                                 row)])
+                         @layout))])})))
 
 
