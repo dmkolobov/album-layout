@@ -38,8 +38,10 @@
                             (map (fn [[id {:keys [width height] :as data}]]
                                    ^{:key id}
                                    [:div
-                                    {:style {:width      width
-                                             :height     height
+                                    ;; BUG: Usage of parseInt results in rows which vary slightly
+                                    ;;      in width. Needed to fix row overflow in Firefox.
+                                    {:style {:width      (js/parseInt width)
+                                             :height     (js/parseInt height)
                                              :padding    "0.25em"
                                              :float      "left"
                                              :box-sizing "border-box"}}
