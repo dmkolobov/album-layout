@@ -13,8 +13,7 @@
 
 (defn resize-handler
   [layout-id node scale-increment]
-  (fn []
-    (dispatch [:album-layout/container-resized layout-id (node-dimensions node) scale-increment])))
+  #(dispatch [:album-layout/container-resized layout-id (node-dimensions node) scale-increment]))
 
 (defn perfect-layout
   [& {:keys [items render-fn scale-increment]

@@ -4,7 +4,7 @@
             [album-layout.bundle]))
 
 (reg-sub :album-layout/window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
-(reg-sub :album-layout/window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base])))
+(reg-sub :album-layout/window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base-box])))
 
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
@@ -88,9 +88,9 @@
 
 (defn scale-layout
   "Return a layout which contains explicit dimensions for items."
-  [{:keys [base scale] :as window} layout]
-  (let [width        (* scale (:width base))
-        height       (/ (:height base) 2)]
+  [{:keys [box] :as window} layout]
+  (let [width        (:width box)
+        height       (/ (:height box) 2)]
     (for [row layout] (scale-row width height row))))
 
 (reg-sub
