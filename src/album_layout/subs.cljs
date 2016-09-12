@@ -10,8 +10,7 @@
 (defn total-width
   ""
   [target-height items]
-  (reduce (fn [sum [_ {:keys [aspect]}]]
-            (+ sum (* aspect target-height)))
+  (reduce (fn [sum [_ {:keys [aspect]}]] (+ sum (* aspect target-height)))
           0
           items))
 
@@ -76,9 +75,9 @@
   [row-width row-height items]
   (let [factor (row-scale-factor row-width row-height items)]
     (map (fn [[id {:keys [aspect] :as data}]]
-           [id (merge data
-                      {:width  (* aspect row-height factor)
-                       :height (* row-height factor)})])
+           [id (assoc data
+                 :width  (* aspect row-height factor)
+                 :height (* row-height factor))])
          items)))
 
 (defn scale-layout
