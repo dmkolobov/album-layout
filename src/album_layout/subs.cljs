@@ -8,11 +8,11 @@
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
 (defn total-width
-  ""
   [target-height items]
-  (reduce (fn [sum [_ {:keys [aspect]}]] (+ sum (* aspect target-height)))
-          0
-          items))
+  (* target-height
+     (reduce (fn [sum [_ {:keys [aspect]}]] (+ sum aspect))
+             0
+             items)))
 
 (defn compute-rows
   "Given the window dimensions and a sequence of item aspect ratios,
@@ -35,13 +35,6 @@
 
 (defn item-weight [i] (* 100 (item-aspect i)))
 
-(defn fill-partitions
-  "Replace each aspect ratio in the partition sequence with an item of the
-   same aspect ratio. Each item is used only once."
-  [partitions items]
-  (map (partial map (selector item-weight items))
-       partitions))
-
 (defn compute-layout
   "Given a sequence of items and the window dimensions, return a sequence of
   sequences containing item entries laid out according to the partition
@@ -49,8 +42,8 @@
   [items window-base]
   (let [aspects  (map item-aspect items)
         num-rows (compute-rows window-base items)]
-    (fill-partitions (compute-partitions aspects num-rows)
-                     items)))
+    (map (partial map (selector item-weight items))
+         (compute-partitions aspects num-rows))))
 
 (reg-sub
   :album-layout/layout
@@ -61,36 +54,35 @@
     (when window-base
       (compute-layout items window-base))))
 
-(defn row-scale-factor
-  "Given the row width, ideal row height, and a sequence of items,
-  return the scale factor s, where the actual row height is given
-  by multiplying the ideal row height by s."
-  [row-width row-height items]
-  (/ row-width (total-width row-height items)))
-
-(defn scale-row
-  "Given the row dimensions and a sequence of items, return a new
-  sequence of items which have :width, :height keys. These items
-  are scaled so that the sum of their widths is equal to the the row width."
-  [row-width row-height items]
-  (let [factor (row-scale-factor row-width row-height items)]
-    (map (fn [[id {:keys [aspect] :as data}]]
-           [id (assoc data
-                 :width  (* aspect row-height factor)
-                 :height (* row-height factor))])
-         items)))
+(reg-sub
+  :album-layout/summed-layout
+  (fn [[_ items]]
+    (subscribe [:album-layout/layout items]))
+  (fn [layout]
+    (map (fn [row]
+           [(reduce (fn [sum [_ {:keys [aspect]}]] (+ sum aspect))
+                    0
+                    row)
+            row])
+         layout)))
 
 (defn scale-layout
   "Return a layout which contains explicit dimensions for items."
   [{:keys [box] :as window} layout]
-  (let [width        (:width box)
-        height       (/ (:height box) 2)]
-    (for [row layout] (scale-row width height row))))
+  (let [width (:width box)]
+    (map (fn [[aspect-sum items]]
+           (map (fn [[id {:keys [aspect] :as data}]]
+                  (let [height (/ width aspect-sum)]
+                    [id (assoc data
+                          :width  (* aspect height)
+                          :height height)]))
+                items))
+         layout)))
 
 (reg-sub
   :album-layout/scaled-layout
   (fn [[_ items]]
     [(subscribe [:album-layout/window (hash items)])
-     (subscribe [:album-layout/layout items])])
+     (subscribe [:album-layout/summed-layout items])])
   (fn [[window layout] _]
     (scale-layout window layout)))

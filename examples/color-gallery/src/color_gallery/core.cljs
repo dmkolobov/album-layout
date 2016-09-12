@@ -65,7 +65,7 @@
   []
   [perfect-layout :items           (subscribe [:images])
                   :render-fn       render-image
-                  :scale-increment 100])
+                  :scale-increment 200])
 
 (reagent/render-component [color-gallery]
                           (. js/document (getElementById "app")))
