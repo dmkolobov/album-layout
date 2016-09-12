@@ -3,7 +3,7 @@
 
 (defrecord LayoutContainer [base-box box])
 
-(defn should-layout?
+(defn ^boolean should-layout?
   [delta rect new-rect]
   (> (.abs js/Math
            (- (:width rect)
