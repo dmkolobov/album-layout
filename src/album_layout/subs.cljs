@@ -60,11 +60,7 @@
      (subscribe [:album-layout/window-base (hash items)])])
   (fn [[items window-base] _]
     (when window-base
-      (let [start  (.now js/Date)
-            layout (compute-layout items window-base)]
-        (with-out-str (println layout))
-        (println "time to layout:" (- (.now js/Date) start))
-        layout))))
+      (compute-layout items window-base))))
 
 (defn row-scale-factor
   "Given the row width, ideal row height, and a sequence of items,
