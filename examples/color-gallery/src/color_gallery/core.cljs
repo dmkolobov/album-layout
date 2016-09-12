@@ -17,12 +17,32 @@
 
 (defn gen-ratio [] (rand-nth common-ratios))
 
-(def colors
-  ["#444"
-   "#333"
-   "#222"])
+(def base-color 0x0E4E63)
 
-(defn gen-color [] (rand-nth colors))
+(defn determine-color
+  [x mask shift amt]
+  (let [x (+ amt (bit-and (bit-shift-right x shift) mask))]
+    (cond (> x 255) 255
+          (< x 0)   0
+          :default  x)))
+
+(defn lighten-darken
+  [x amt]
+  (let [r   (determine-color x x 16 amt)
+        b   (determine-color x 0x00ff 8 amt)
+        g   (determine-color x 0x0000ff 0 amt)]
+    (let [color (.toString (bit-or g
+                                   (bit-shift-left b 8)
+                                   (bit-shift-left r 16))
+                            16)]
+      (str "#"
+           (reduce str (repeat (- 6 (.-length color)) "0"))
+           color))))
+
+(defn gen-color []
+  (lighten-darken base-color
+                  (* (if (> 0 (rand-int 2)) -1 1)
+                     (rand-int 256))))
 
 (defn gen-image [] {:aspect (gen-ratio) :color (gen-color)})
 
@@ -39,8 +59,7 @@
   [:div
    {:style {:width      "100%"
             :height     "100%"
-            :background color}}
-   id])
+            :background color}}])
 
 (defn color-gallery
   []
