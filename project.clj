@@ -1,4 +1,4 @@
-(defproject album-layout "0.1.0"
+(defproject album-layout "0.1.1"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -18,6 +18,8 @@
             [lein-npm "0.6.2"]]
 
   :npm {:dependencies [[linear-partitioning "0.3.1"]]}
+
+  :deploy-repositories [["releases"  {:sign-releases false :url "https://clojars.org/repo"}]]
 
   :source-paths ["src"]
 
