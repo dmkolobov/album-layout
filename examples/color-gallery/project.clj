@@ -12,7 +12,7 @@
                   :exclusions [org.clojure/tools.reader]]
                  [reagent "0.6.0-rc"]
                  [re-frame "0.8.0"]
-                 [album-layout "0.1.1"]]
+                 [album-layout "0.1.2"]]
 
   :plugins [[lein-figwheel "0.5.7"]
             [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]

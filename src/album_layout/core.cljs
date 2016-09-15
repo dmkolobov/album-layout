@@ -16,7 +16,9 @@
   #(dispatch [:album-layout/container-resized layout-id (node-dimensions node) scale-increment]))
 
 (defn perfect-layout
-  [& {:keys [items render-fn scale-increment]
+  [& {:keys [items
+             render-fn
+             scale-increment]
       :or {scale-increment 100}}]
   (let [layout-id (hash items)
         layout    (subscribe [:album-layout/scaled-layout items])]

@@ -7,19 +7,17 @@
 
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
-(defn total-width
-  [target-height items]
-  (* target-height
-     (reduce (fn [sum [_ {:keys [aspect]}]] (+ sum aspect))
-             0
-             items)))
+(defn sum-aspects [sum [_ {:keys [aspect]}]] (+ sum aspect))
+
+(defn calc-aspect-sum [items] (reduce sum-aspects 0 items))
 
 (defn compute-rows
   "Given the window dimensions and a sequence of item aspect ratios,
   return the ideal number of rows for the gallery layout."
   [{:keys [width height]} items]
   (.round js/Math
-          (/ (total-width (/ height 2) items)
+          (/ (* (/ height 2)
+                (calc-aspect-sum items))
              width)))
 
 (defn aspect-weight [a] (* a 100))
@@ -54,17 +52,12 @@
     (when window-base
       (compute-layout items window-base))))
 
+(defn item-scale-pair [items] [(calc-aspect-sum items) items])
+
 (reg-sub
   :album-layout/summed-layout
-  (fn [[_ items]]
-    (subscribe [:album-layout/layout items]))
-  (fn [layout]
-    (map (fn [row]
-           [(reduce (fn [sum [_ {:keys [aspect]}]] (+ sum aspect))
-                    0
-                    row)
-            row])
-         layout)))
+  (fn [[_ items]] (subscribe [:album-layout/layout items]))
+  (fn [layout] (map item-scale-pair layout)))
 
 (defn scale-layout
   "Return a layout which contains explicit dimensions for items."
