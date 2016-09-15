@@ -27,9 +27,8 @@
   a sequence of rows, each of which is a sequence of item aspects
   whose sum is as equal as possible to the sums of other rows."
   [aspects num-rows]
-  (js->clj
-    (js/lpartition (clj->js (map aspect-weight aspects))
-                   num-rows)))
+  (js/lpartition (clj->js (map aspect-weight aspects))
+                 num-rows))
 
 (defn item-weight [i] (* 100 (item-aspect i)))
 
