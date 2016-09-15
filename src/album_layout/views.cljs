@@ -12,7 +12,7 @@
                    ^{:key idx}
                    [:div
                     {:style {:overflow "hidden"}}
-                    (map (fn [[id {:keys [width height] :as data}]]
+                    (map (fn [[id {:keys [width height] :as box} data]]
                            ^{:key id}
                            [:div
                             ;; BUG: Usage of parseInt results in rows which vary slightly
@@ -22,7 +22,7 @@
                                      :padding    "0.25em"
                                      :float      "left"
                                      :box-sizing "border-box"}}
-                            [render-fn id data]])
+                            [render-fn id box data]])
                          row)])
                  @layout))])
 

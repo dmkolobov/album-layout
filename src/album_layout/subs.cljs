@@ -1,23 +1,18 @@
 (ns album-layout.subs
   (:require [re-frame.core :refer [reg-sub subscribe]]
-            [album-layout.util :refer [selector]]))
+            [album-layout.util :refer [selector mk-rect]]))
 
 (reg-sub :album-layout/window (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id])))
 (reg-sub :album-layout/window-base (fn [db [_ gallery-id]] (get-in db [:album-layout/containers gallery-id :base-box])))
 
 (defn item-aspect [[id {:keys [aspect]}]] aspect)
 
-(defn sum-aspects [sum [_ {:keys [aspect]}]] (+ sum aspect))
-
-(defn calc-aspect-sum [items] (reduce sum-aspects 0 items))
-
 (defn compute-rows
   "Given the window dimensions and a sequence of item aspect ratios,
   return the ideal number of rows for the gallery layout."
-  [{:keys [width height]} items]
+  [{:keys [width height]} aspects]
   (.round js/Math
-          (/ (* (/ height 2)
-                (calc-aspect-sum items))
+          (/ (* (/ height 2) (reduce + aspects))
              width)))
 
 (defn aspect-weight [a] (* a 100))
@@ -38,7 +33,7 @@
   algorithm."
   [items window-base]
   (let [aspects  (map item-aspect items)
-        num-rows (compute-rows window-base items)]
+        num-rows (compute-rows window-base aspects)]
     (map (partial map (selector item-weight items))
          (compute-partitions aspects num-rows))))
 
@@ -51,12 +46,15 @@
     (when window-base
       (compute-layout items window-base))))
 
-(defn item-scale-pair [items] [(calc-aspect-sum items) items])
+(defn row-aspect-map
+  [layout]
+  (map (fn [items] [(reduce + (map item-aspect items)) items])
+       layout))
 
 (reg-sub
   :album-layout/summed-layout
   (fn [[_ items]] (subscribe [:album-layout/layout items]))
-  (fn [layout] (map item-scale-pair layout)))
+  (fn [layout] (row-aspect-map layout)))
 
 (defn scale-layout
   "Return a layout which contains explicit dimensions for items."
@@ -64,10 +62,9 @@
   (let [width (:width box)]
     (map (fn [[aspect-sum items]]
            (map (fn [[id {:keys [aspect] :as data}]]
-                  (let [height (/ width aspect-sum)]
-                    [id (assoc data
-                          :width  (* aspect height)
-                          :height height)]))
+                  (let [height (/ width aspect-sum)
+                        new-box (mk-rect (* aspect height) height)]
+                    [id new-box data]))
                 items))
          layout)))
 

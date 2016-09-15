@@ -55,7 +55,7 @@
 (dispatch [:create-images])
 
 (defn render-image
-  [id {:keys [color]}]
+  [id box {:keys [color]}]
   [:div
    {:style {:width      "100%"
             :height     "100%"
