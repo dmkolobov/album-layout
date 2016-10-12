@@ -17,7 +17,8 @@
 
 (defn perfect-layout
   [& {:keys [items
-             render-fn
+             gallery-fn
+             item-fn
              scale-increment]
       :or {scale-increment 100}}]
   (let [layout-id (hash items)
@@ -25,7 +26,7 @@
     (reagent/create-class
       {:component-did-mount
        (fn [owner]
-         (let [node (reagent/dom-node owner)
+         (let [node       (reagent/dom-node owner)
                on-resize! (resize-handler layout-id node scale-increment)]
            (.listen goog.events
                     js/window
@@ -34,5 +35,6 @@
            (on-resize!)))
        :reagent-render
        (fn []
-         [views/gallery :layout    layout
-                        :render-fn render-fn])})))
+         [gallery-fn
+          (views/gallery :render-fn item-fn
+                         :layout    layout)])})))

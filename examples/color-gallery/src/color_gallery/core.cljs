@@ -55,16 +55,22 @@
 (dispatch [:create-images])
 
 (defn render-image
-  [id box {:keys [color]}]
-  [:div
-   {:style {:width      "100%"
-            :height     "100%"
-            :background color}}])
+      [id {:keys [width height]} {:keys [color]}]
+      (println "rendering image")
+      [:div
+       {:style {:width      "100%"
+                :height     "100%"
+                :background color}}])
+
+(defn render-gallery
+  [rows]
+  [:div rows])
 
 (defn color-gallery
   []
   [perfect-layout :items           (subscribe [:images])
-                  :render-fn       render-image
+                  :gallery-fn      render-gallery
+                  :item-fn         render-image
                   :scale-increment 200])
 
 (reagent/render-component [color-gallery]

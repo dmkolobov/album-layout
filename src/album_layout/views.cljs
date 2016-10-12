@@ -6,7 +6,6 @@
 (defn gallery
   ""
   [& {:keys [layout render-fn]}]
-  [:div
   (doall
     (map-indexed (fn [idx row]
                    ^{:key idx}
@@ -22,7 +21,7 @@
                                      :padding    "0.25em"
                                      :float      "left"
                                      :box-sizing "border-box"}}
-                            [render-fn id box data]])
-                         row)])
-                 @layout))])
+                             [render-fn id box data]])
+                          row)])
+                  @layout)))
 

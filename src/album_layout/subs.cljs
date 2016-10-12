@@ -62,7 +62,7 @@
   (let [width (:width box)]
     (map (fn [[aspect-sum items]]
            (map (fn [[id {:keys [aspect] :as data}]]
-                  (let [height (/ width aspect-sum)
+                  (let [height  (/ width aspect-sum)
                         new-box (mk-rect (* aspect height) height)]
                     [id new-box data]))
                 items))

@@ -1,4 +1,4 @@
-(defproject album-layout "0.1.2"
+(defproject album-layout "0.1.3"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
