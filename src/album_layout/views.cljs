@@ -7,21 +7,23 @@
   ""
   [& {:keys [layout render-fn]}]
   (doall
-    (map-indexed (fn [idx row]
-                   ^{:key idx}
-                   [:div
-                    {:style {:overflow "hidden"}}
-                    (map (fn [[id {:keys [width height] :as box} data]]
-                           ^{:key id}
-                           [:div
-                            ;; BUG: Usage of parseInt results in rows which vary slightly
-                            ;;      in width. Needed to fix row overflow in Firefox.
-                            {:style {:width      (js/parseInt width)
-                                     :height     (js/parseInt height)
-                                     :padding    "0.25em"
-                                     :float      "left"
-                                     :box-sizing "border-box"}}
-                             [render-fn id box data]])
-                          row)])
+    (map-indexed (fn [row-idx row]
+                   ^{:key row-idx}
+                   [:div {:style {:position "relative"
+                                  :height   (:height (second (first row)))}}
+                    (seq
+                      (first
+                        (reduce (fn [[row x] [id {:keys [width height] :as rect} data]]
+                                  [(conj row
+                                         ^{:key id}
+                                         [:div {:style {:position "absolute"
+                                                        :width    width
+                                                        :height   height
+                                                        :top      0
+                                                        :left     x}}
+                                          [render-fn id rect {:row row-idx}]])
+                                   (+ x width)])
+                                [[] 0]
+                                row)))])
                   @layout)))
 

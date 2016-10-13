@@ -16,6 +16,8 @@
   "Given a DOM element, return a map containing the width
   and height of the element."
   [node]
-  (let [box (.getBoundingClientRect node)]
-    (Rect. (.-width box)
-           (.-innerHeight js/window))));
+  (let [rect (.getBoundingClientRect node)]
+    (Rect. (js/parseInt
+             (min (.-width rect)
+                  document.documentElement.clientWidth))
+           (.-innerHeight js/window))))
