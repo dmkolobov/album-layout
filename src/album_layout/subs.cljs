@@ -60,13 +60,13 @@
   "Return a layout which contains explicit dimensions for items."
   [{:keys [box] :as window} layout]
   (let [width (:width box)]
-    (map (fn [[aspect-sum items]]
-           (map (fn [[id {:keys [aspect] :as data}]]
-                  (let [height  (/ width aspect-sum)
-                        new-box (mk-rect (* aspect height) height)]
-                    [id new-box data]))
-                items))
-         layout)))
+    (map-indexed (fn [row-idx [aspect-sum items]]
+                   (map-indexed (fn [col-idx [id {:keys [aspect] :as data}]]
+                                  (let [height  (/ width aspect-sum)
+                                        new-box (mk-rect (* aspect height) height)]
+                                    [id new-box {:row row-idx :col col-idx}]))
+                                items))
+                 layout)))
 
 (reg-sub
   :album-layout/scaled-layout

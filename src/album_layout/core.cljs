@@ -35,6 +35,8 @@
            (on-resize!)))
        :reagent-render
        (fn []
-         [gallery-fn
+         [:div
+          {:style {:width "100%"}}
+          [gallery-fn
           (views/gallery :render-fn item-fn
-                         :layout    layout)])})))
+                         :layout    layout)]])})))

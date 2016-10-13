@@ -19,5 +19,5 @@
   (let [rect (.getBoundingClientRect node)]
     (Rect. (js/parseInt
              (min (.-width rect)
-                  document.documentElement.clientWidth))
+                  (.-innerWidth js/window)))
            (.-innerHeight js/window))))

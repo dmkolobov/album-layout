@@ -21,7 +21,7 @@
                                                         :height   height
                                                         :top      0
                                                         :left     x}}
-                                          [render-fn id rect {:row row-idx}]])
+                                          [render-fn id rect data]])
                                    (+ x width)])
                                 [[] 0]
                                 row)))])
